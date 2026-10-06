@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Chilakamari Prashanth | Full Stack Python Dashboard</title>
+
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+
+        /* =========================
+           RESET
+        ========================= */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Inter", sans-serif;
+            background: #070b14;
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* =========================
+           ANIMATED BACKGROUND
+        ========================= */
+
+        body::before {
+            content: "";
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            background: #6c63ff;
+            filter: blur(180px);
+            opacity: 0.15;
+            top: -200px;
+            left: -150px;
+            z-index: -2;
+            animation: glowMove 8s infinite alternate ease-in-out;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            width: 450px;
+            height: 450px;
+            background: #00d4ff;
+            filter: blur(180px);
+            opacity: 0.12;
+            right: -150px;
+            bottom: -200px;
+            z-index: -2;
+            animation: glowMove2 10s infinite alternate ease-in-out;
+        }
+
+        @keyframes glowMove {
+            from {
+                transform: translate(0, 0);
+            }
+
+            to {
+                transform: translate(180px, 120px);
+            }
+        }
+
+        @keyframes glowMove2 {
+            from {
+                transform: translate(0, 0);
+            }
+
+            to {
+                transform: translate(-150px, -120px);
+            }
+        }
+
+        /* =========================
+           LAYOUT
+        ========================= */
+
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* =========================
+           SIDEBAR
+        ========================= */
+
+        .sidebar {
+            width: 260px;
+            padding: 28px 20px;
+            background: rgba(10, 15, 28, 0.72);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255,255,255,0.08);
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 10;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 45px;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 13px;
+            display: grid;
+            place-items: center;
+            font-size: 21px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #766cff, #00d4ff);
+            box-shadow: 0 0 25px rgba(118,108,255,0.35);
+        }
+
+        .logo-text {
+            font-family: "Space Grotesk";
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .logo-text span {
+            color: #8179ff;
+        }
+
+        .menu-title {
+            color: #687187;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 25px 10px 12px;
+        }
+
+        .nav {
+            list-style: none;
+        }
+
+        .nav li {
+            margin-bottom: 8px;
+        }
+
+        .nav a {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 13px 15px;
+            border-radius: 12px;
+            text-decoration: none;
+            color: #929bad;
+            transition: 0.3s ease;
+        }
+
+        .nav a:hover,
+        .nav a.active {
+            color: #ffffff;
+            background: linear-gradient(
+                90deg,
+                rgba(118,108,255,0.2),
+                rgba(0,212,255,0.06)
+            );
+            transform: translateX(5px);
+        }
+
+        .nav a.active {
+            border-left: 3px solid #8179ff;
+        }
+
+        .nav-icon {
+            font-size: 19px;
+        }
+
+        /* =========================
+           PROFILE
+        ========================= */
+
+        .profile {
+            position: absolute;
+            bottom: 25px;
+            left: 20px;
+            right: 20px;
+            padding: 15px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.035);
+            border-radius: 16px;
+        }
+
+        .profile-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #8179ff, #00d4ff);
+            display: grid;
+            place-items: center;
+            font-weight: 800;
+        }
+
+        .profile h4 {
+            font-size: 13px;
+        }
+
+        .profile p {
+            color: #737d91;
+            font-size: 11px;
+            margin-top: 4px;
+        }
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .main {
+            margin-left: 260px;
+            width: calc(100% - 260px);
+            padding: 35px;
+        }
+
+        /* =========================
+           TOP BAR
+        ========================= */
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 35px;
+            animation: slideDown 0.8s ease forwards;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .welcome small {
+            color: #747f94;
+            font-size: 13px;
+        }
+
+        .welcome h1 {
+            font-family: "Space Grotesk";
+            font-size: 30px;
+            margin-top: 5px;
+        }
+
+        .welcome h1 span {
+            background: linear-gradient(90deg, #ffffff, #8179ff, #00d4ff);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .date {
+            padding: 11px 17px;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            color: #8c96aa;
+            background: rgba(255,255,255,0.03);
+            font-size: 13px;
+        }
+
+        /* =========================
+           HERO CARD
+        ========================= */
+
+        .hero {
+            min-height: 250px;
+            border-radius: 25px;
+            padding: 35px;
+            position: relative;
+            overflow: hidden;
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(118,108,255,0.20),
+                    rgba(0,212,255,0.07)
+                );
+            border: 1px solid rgba(255,255,255,0.09);
+            margin-bottom: 25px;
+            animation: fadeUp 0.8s ease forwards;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(25px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: #8179ff;
+            filter: blur(100px);
+            opacity: 0.16;
+            right: -80px;
+            top: -100px;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-tag {
+            display: inline-block;
+            padding: 7px 12px;
+            background: rgba(129,121,255,0.15);
+            border: 1px solid rgba(129,121,255,0.3);
+            color: #a8a2ff;
+            border-radius: 50px;
+            font-size: 11px;
+            margin-bottom: 15px;
+        }
+
+        .hero h2 {
+            font-family: "Space Grotesk";
+            font-size: 32px;
+            max-width: 600px;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            color: #8d97aa;
+            margin-top: 12px;
+            max-width: 560px;
+            line-height: 1.6;
+        }
+
+        .hero-btn {
+            display: inline-block;
+            margin-top: 22px;
+            padding: 12px 20px;
+            border-radius: 10px;
+            color: white;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            background: linear-gradient(90deg, #766cff, #00b8df);
+            transition: 0.3s;
+            box-shadow: 0 10px 30px rgba(118,108,255,0.2);
+        }
+
+        .hero-btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 35px rgba(118,108,255,0.35);
+        }
+
+        /* =========================
+           STATS
+        ========================= */
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            padding: 22px;
+            border-radius: 18px;
+            background: rgba(255,255,255,0.035);
+            border: 1px solid rgba(255,255,255,0.07);
+            transition: 0.35s;
+            animation: cardAppear 0.7s ease backwards;
+        }
+
+        .stat-card:nth-child(1) { animation-delay: .1s; }
+        .stat-card:nth-child(2) { animation-delay: .2s; }
+        .stat-card:nth-child(3) { animation-delay: .3s; }
+        .stat-card:nth-child(4) { animation-delay: .4s; }
+
+        @keyframes cardAppear {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(.96);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .stat-card:hover {
+            transform: translateY(-7px);
+            border-color: rgba(129,121,255,0.3);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .stat-top {
+            display: flex;
+            justify-content: space-between;
+            color: #788398;
+            font-size: 12px;
+        }
+
+        .stat-icon {
+            font-size: 21px;
+        }
+
+        .stat-card h3 {
+            font-size: 27px;
+            margin: 13px 0 5px;
+        }
+
+        .stat-card p {
+            font-size: 11px;
+            color: #697489;
+        }
+
+        /* =========================
+           CONTENT GRID
+        ========================= */
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 20px;
+        }
+
+        .panel {
+            background: rgba(255,255,255,0.035);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 20px;
+            padding: 25px;
+        }
+
+        .panel-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 22px;
+        }
+
+        .panel-title h3 {
+            font-family: "Space Grotesk";
+            font-size: 17px;
+        }
+
+        .panel-title span {
+            font-size: 11px;
+            color: #8179ff;
+        }
+
+        /* =========================
+           COURSE MODULES
+        ========================= */
+
+        .module {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-radius: 14px;
+            background: rgba(255,255,255,0.025);
+            transition: .3s;
+        }
+
+        .module:hover {
+            background: rgba(255,255,255,0.06);
+            transform: translateX(6px);
+        }
+
+        .module-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            font-size: 19px;
+            background: rgba(129,121,255,0.12);
+        }
+
+        .module-info {
+            flex: 1;
+        }
+
+        .module-info h4 {
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .progress {
+            height: 6px;
+            background: #171d2b;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            border-radius: 20px;
+            background: linear-gradient(90deg, #766cff, #00d4ff);
+            animation: progressLoad 1.5s ease forwards;
+            transform-origin: left;
+        }
+
+        @keyframes progressLoad {
+            from {
+                transform: scaleX(0);
+            }
+
+            to {
+                transform: scaleX(1);
+            }
+        }
+
+        .module-percent {
+            font-size: 11px;
+            color: #8791a5;
+        }
+
+        /* =========================
+           DAILY GOAL
+        ========================= */
+
+        .goal-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin: 10px auto 25px;
+            display: grid;
+            place-items: center;
+            position: relative;
+            background: conic-gradient(
+                #8179ff 72%,
+                #1a2030 72%
+            );
+            animation: rotateIn 1s ease;
+        }
+
+        @keyframes rotateIn {
+            from {
+                transform: rotate(-90deg) scale(.6);
+                opacity: 0;
+            }
+
+            to {
+                transform: rotate(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .goal-circle::before {
+            content: "";
+            position: absolute;
+            width: 116px;
+            height: 116px;
+            border-radius: 50%;
+            background: #101521;
+        }
+
+        .goal-number {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+        }
+
+        .goal-number strong {
+            font-size: 27px;
+            display: block;
+        }
+
+        .goal-number span {
+            color: #737e93;
+            font-size: 10px;
+        }
+
+        .goal-text {
+            text-align: center;
+            color: #7c879b;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        /* =========================
+           ACHIEVEMENT
+        ========================= */
+
+        .achievement {
+            margin-top: 20px;
+            padding: 16px;
+            border-radius: 14px;
+            background: linear-gradient(
+                135deg,
+                rgba(255,255,255,0.05),
+                rgba(129,121,255,0.08)
+            );
+            border: 1px solid rgba(255,255,255,0.06);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .trophy {
+            font-size: 30px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%,100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-7px);
+            }
+        }
+
+        .achievement h4 {
+            font-size: 12px;
+        }
+
+        .achievement p {
+            color: #737e93;
+            font-size: 10px;
+            margin-top: 4px;
+        }
+
+        /* =========================
+           FLOATING DOTS
+        ========================= */
+
+        .dot {
+            position: fixed;
+            width: 5px;
+            height: 5px;
+            background: #8179ff;
+            border-radius: 50%;
+            opacity: .5;
+            z-index: -1;
+        }
+
+        .dot1 {
+            top: 20%;
+            right: 12%;
+            animation: float 5s infinite ease-in-out;
+        }
+
+        .dot2 {
+            top: 65%;
+            right: 30%;
+            animation: float 7s infinite ease-in-out;
+        }
+
+        .dot3 {
+            top: 35%;
+            left: 35%;
+            animation: float 6s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%,100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-30px);
+            }
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 1000px) {
+
+            .sidebar {
+                width: 80px;
+            }
+
+            .logo-text,
+            .menu-title,
+            .nav a span,
+            .profile-info > div {
+                display: none;
+            }
+
+            .logo {
+                justify-content: center;
+            }
+
+            .nav a {
+                justify-content: center;
+            }
+
+            .profile {
+                padding: 10px;
+            }
+
+            .profile-info {
+                justify-content: center;
+            }
+
+            .main {
+                margin-left: 80px;
+                width: calc(100% - 80px);
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+        }
+
+        @media (max-width: 700px) {
+
+            .main {
+                padding: 20px;
+            }
+
+            .topbar {
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .welcome h1 {
+                font-size: 23px;
+            }
+
+            .date {
+                display: none;
+            }
+
+            .hero {
+                padding: 25px;
+            }
+
+            .hero h2 {
+                font-size: 25px;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <!-- Floating particles -->
+    <div class="dot dot1"></div>
+    <div class="dot dot2"></div>
+    <div class="dot dot3"></div>
+
+
+    <div class="dashboard">
+
+        <!-- ================= SIDEBAR ================= -->
+
+        <aside class="sidebar">
+
+            <div class="logo">
+                <div class="logo-icon">CP</div>
+
+                <div class="logo-text">
+                    <span>CP</span> Academy
+                </div>
+            </div>
+
+
+            <div class="menu-title">Main Menu</div>
+
+            <ul class="nav">
+
+                <li>
+                    <a href="#" class="active">
+                        <span class="nav-icon">⌂</span>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="#">
+                        <span class="nav-icon">📚</span>
+                        <span>My Courses</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="#">
+                        <span class="nav-icon">📝</span>
+                        <span>Assignments</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="#">
+                        <span class="nav-icon">🏆</span>
+                        <span>Achievements</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="#">
+                        <span class="nav-icon">📊</span>
+                        <span>Progress</span>
+                    </a>
+                </li>
+
+            </ul>
+
+
+            <div class="menu-title">Other</div>
+
+            <ul class="nav">
+
+                <li>
+                    <a href="#">
+                        <span class="nav-icon">⚙</span>
+                        <span>Settings</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="#">
+                        <span class="nav-icon">?</span>
+                        <span>Help</span>
+                    </a>
+                </li>
+
+            </ul>
+
+
+            <div class="profile">
+
+                <div class="profile-info">
+
+                    <div class="avatar">
+                        CP
+                    </div>
+
+                    <div>
+                        <h4>Chilakamari Prashanth</h4>
+                        <p>Full Stack Developer</p>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </aside>
+
+
+        <!-- ================= MAIN ================= -->
+
+        <main class="main">
+
+
+            <!-- TOPBAR -->
+
+            <header class="topbar">
+
+                <div class="welcome">
+
+                    <small>GOOD MORNING, PRASHANTH 👋</small>
+
+                    <h1>
+                        Welcome back,
+                        <span>Chilakamari</span>
+                    </h1>
+
+                </div>
+
+                <div class="date">
+                    September 15, 2026
+                </div>
+
+            </header>
+
+
+            <!-- HERO -->
+
+            <section class="hero">
+
+                <div class="hero-content">
+
+                    <span class="hero-tag">
+                        🐍 FULL STACK PYTHON
+                    </span>
+
+                    <h2>
+                        Build your skills.<br>
+                        Build your future.
+                    </h2>
+
+                    <p>
+                        Continue your Full Stack Python journey and
+                        become a job-ready developer. Keep learning,
+                        keep building, keep improving.
+                    </p>
+
+                    <a href="#" class="hero-btn">
+                        Continue Learning →
+                    </a>
+
+                </div>
+
+            </section>
+
+
+            <!-- STATS -->
+
+            <section class="stats">
+
+                <div class="stat-card">
+
+                    <div class="stat-top">
+                        <span>COURSE PROGRESS</span>
+                        <span class="stat-icon">📈</span>
+                    </div>
+
+                    <h3>68%</h3>
+
+                    <p>+8% this week</p>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-top">
+                        <span>STUDY HOURS</span>
+                        <span class="stat-icon">⏱</span>
+                    </div>
+
+                    <h3>42h</h3>
+
+                    <p>12h this week</p>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-top">
+                        <span>LESSONS</span>
+                        <span class="stat-icon">📖</span>
+                    </div>
+
+                    <h3>84</h3>
+
+                    <p>57 completed</p>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-top">
+                        <span>STREAK</span>
+                        <span class="stat-icon">🔥</span>
+                    </div>
+
+                    <h3>12 Days</h3>
+
+                    <p>Personal best!</p>
+
+                </div>
+
+            </section>
+
+
+            <!-- CONTENT -->
+
+            <section class="content-grid">
+
+
+                <!-- COURSE MODULES -->
+
+                <div class="panel">
+
+                    <div class="panel-title">
+
+                        <h3>Course Modules</h3>
+
+                        <span>VIEW ALL →</span>
+
+                    </div>
+
+
+                    <!-- HTML -->
+
+                    <div class="module">
+
+                        <div class="module-icon">
+                            🌐
+                        </div>
+
+                        <div class="module-info">
+
+                            <h4>HTML & Web Fundamentals</h4>
+
+                            <div class="progress">
+                                <div
+                                    class="progress-bar"
+                                    style="width: 92%;">
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="module-percent">
+                            92%
+                        </div>
+
+                    </div>
+
+
+                    <!-- CSS -->
+
+                    <div class="module">
+
+                        <div class="module-icon">
+                            🎨
+                        </div>
+
+                        <div class="module-info">
+
+                            <h4>CSS & Responsive Design</h4>
+
+                            <div class="progress">
+                                <div
+                                    class="progress-bar"
+                                    style="width: 82%;">
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="module-percent">
+                            82%
+                        </div>
+
+                    </div>
+
+
+                    <!-- JS -->
+
+                    <div class="module">
+
+                        <div class="module-icon">
+                            ⚡
+                        </div>
+
+                        <div class="module-info">
+
+                            <h4>JavaScript</h4>
+
+                            <div class="progress">
+                                <div
+                                    class="progress-bar"
+                                    style="width: 65%;">
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="module-percent">
+                            65%
+                        </div>
+
+                    </div>
+
+
+                    <!-- Python -->
+
+                    <div class="module">
+
+                        <div class="module-icon">
+                            🐍
+                        </div>
+
+                        <div class="module-info">
+
+                            <h4>Python Programming</h4>
+
+                            <div class="progress">
+                                <div
+                                    class="progress-bar"
+                                    style="width: 58%;">
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="module-percent">
+                            58%
+                        </div>
+
+                    </div>
+
+
+                    <!-- Django -->
+
+                    <div class="module">
+
+                        <div class="module-icon">
+                            🚀
+                        </div>
+
+                        <div class="module-info">
+
+                            <h4>Django & Backend</h4>
+
+                            <div class="progress">
+                                <div
+                                    class="progress-bar"
+                                    style="width: 35%;">
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="module-percent">
+                            35%
+                        </div>
+
+                    </div>
+
+
+                    <!-- Database -->
+
+                    <div class="module">
+
+                        <div class="module-icon">
+                            🗄
+                        </div>
+
+                        <div class="module-info">
+
+                            <h4>SQL & Databases</h4>
+
+                            <div class="progress">
+                                <div
+                                    class="progress-bar"
+                                    style="width: 25%;">
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="module-percent">
+                            25%
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- RIGHT PANEL -->
+
+                <div>
+
+
+                    <!-- DAILY GOAL -->
+
+                    <div class="panel">
+
+                        <div class="panel-title">
+
+                            <h3>Today's Goal</h3>
+
+                            <span>72%</span>
+
+                        </div>
+
+
+                        <div class="goal-circle">
+
+                            <div class="goal-number">
+
+                                <strong>72%</strong>
+
+                                <span>COMPLETED</span>
+
+                            </div>
+
+                        </div>
+
+
+                        <p class="goal-text">
+                            You're doing great! Complete
+                            <strong>28%</strong> more to reach
+                            today's study goal.
+                        </p>
+
+                    </div>
+
+
+                    <!-- ACHIEVEMENT -->
+
+                    <div class="achievement">
+
+                        <div class="trophy">
+                            🏆
+                        </div>
+
+                        <div>
+
+                            <h4>12 Day Learning Streak</h4>
+
+                            <p>
+                                Keep going! Don't break your streak.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+</body>
+</html>
